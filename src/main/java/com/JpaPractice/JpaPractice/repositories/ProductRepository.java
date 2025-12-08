@@ -1,6 +1,10 @@
 package com.JpaPractice.JpaPractice.repositories;
 
 import com.JpaPractice.JpaPractice.entities.ProductEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,9 +17,11 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity,Long> {
 
-    List<ProductEntity> findByTitle(String title);
+    //we can add order by at the end of query to get ordered data
+   // List<ProductEntity> findByOrderByPrice();
+    List<ProductEntity> findBy(Sort sort);
 
-    List<ProductEntity> findByCreatedAtAfter(LocalDateTime after);
+    List<ProductEntity> findByCreatedAtAfterOrderByTitle(LocalDateTime after);
 
     List<ProductRepository> findByQuantityGreaterThanOrPriceLessThan(int quantity, BigDecimal price);
 
@@ -27,4 +33,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity,Long> {
 
     @Query("select e from ProductEntity e where e.title=?1 and e.price=?2")
     Optional<ProductEntity> findByTitleAndPrice(String title, BigDecimal price);
+
+    Page<ProductEntity> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 }
